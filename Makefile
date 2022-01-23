@@ -11,6 +11,8 @@ BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-mini
 LNCR_ZIP_URL=https://github.com/yuk7/wsldl/releases/download/21082800/icons.zip
 LNCR_ZIP_EXE=Alpine.exe
 KUBERNETES_VERSION=1.23.1
+IKNITE_VERSION=0.1.2
+IKNITE_URL=https://github.com/kaweezle/iknite/releases/download/v$(IKNITE_VERSION)/iknite_$(IKNITE_VERSION)_linux_amd64.apk
 
 KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.6 \
 	k8s.gcr.io/kube-controller-manager:v$(KUBERNETES_VERSION) \
@@ -21,12 +23,12 @@ KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.6 \
 	k8s.gcr.io/kube-apiserver:v$(KUBERNETES_VERSION)
 
 
-BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:v0.0.20 \
+BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:v0.0.21 \
 	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.0 \
 	quay.io/coreos/flannel:v0.15.1 \
 	quay.io/metallb/controller:v0.11.0 \
 	quay.io/metallb/speaker:v0.11.0 \
-	k8s.gcr.io/metrics-server/metrics-server:v0.5.2
+	k8s.gcr.io/metrics-server/metrics-server:v0.6.0
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
 
@@ -53,19 +55,22 @@ $(BUILDDIR)/Launcher.exe: $(BUILDDIR)/icons.zip
 	mv $(LNCR_ZIP_EXE) $@
 	touch $@
 
-$(BUILDDIR)/rootfs.tar.gz: $(BUILDDIR)/rootfs $(BUILDDIR)/rootfs/kwsl
+$(BUILDDIR)/rootfs.tar.gz: $(BUILDDIR)/rootfs
 	@echo -e '\e[1;31mBuilding rootfs.tar.gz...\e[m'
 	bsdtar -zcpf $@ -C $< `ls $<`
 	chown `id -un` $@
 
-$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/profile wslimage/rc.conf
+$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz $(BUILDDIR)/iknite.apk wslimage/rc.conf wslimage/crictl.sh wslimage/kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
 	@echo -e '\e[1;31mBuilding rootfs...\e[m'
 	mkdir -p $@
 	bsdtar -zxpkf $(BUILDDIR)/base.tar.gz -C $@
 	cp -f /etc/resolv.conf $@/etc/resolv.conf
-	cp -f wslimage/profile $@/etc/profile
+	cp -f wslimage/crictl.sh $@/etc/profile.d
+	cp -f wslimage/kaweezle-devel@kaweezle.com-c9d89864.rsa.pub $@/etc/apk/keys
 	grep -q edge/testing $@/etc/apk/repositories || echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> $@/etc/apk/repositories
-	chroot $@ /sbin/apk --update-cache add zsh oh-my-zsh cri-o kubelet kubeadm kubectl kubelet-openrc cri-o-contrib-cni util-linux-misc git
+	cp $(BUILDDIR)/iknite.apk $@
+	chroot $@ /sbin/apk --update-cache add zsh oh-my-zsh /iknite.apk
+	rm -f $@/iknite.apk
 	mv $@/etc/cni/net.d/10-crio-bridge.conf $@/etc/cni/net.d/12-crio-bridge.conf || /bin/true
 	cp -f $@/usr/share/oh-my-zsh/templates/zshrc.zsh-template $@/root/.zshrc
 	chmod +x $@/root/.zshrc
@@ -86,10 +91,6 @@ $(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/profile wslimage/rc.conf
 	chroot $@ rc-update add crio default
 	chroot $@ rc-update add kubelet default
 
-$(BUILDDIR)/rootfs/kwsl: $(BUILDDIR)/rootfs
-	go mod tidy
-	go build -o $@ -ldflags "-X k8s.KUBERNETES_VERSION=$(KUBERNETES_VERSION)"
-
 # For this to work, you need to have cri-o and skopeo installed locally
 make_images: $(BUILDDIR)/rootfs
 	sed -ie '/^graphroot = / s#.*$$#graphroot = "$</var/lib/containers/storage"#' /etc/containers/storage.conf
@@ -108,6 +109,10 @@ $(BUILDDIR)/base.tar.gz: | $(BUILDDIR)
 $(BUILDDIR)/icons.zip: | $(BUILDDIR)
 	@echo -e '\e[1;31mDownloading icons.zip...\e[m'
 	$(DLR) $(DLR_FLAGS) $(LNCR_ZIP_URL) -o $@
+
+$(BUILDDIR)/iknite.apk: | $(BUILDDIR)
+	@echo -e '\e[1;31mDownloading iknite APK...\e[m'
+	$(DLR) $(DLR_FLAGS) $(IKNITE_URL) -o $@
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
