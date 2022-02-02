@@ -12,6 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IKNITE_VERSION: 0.1.4
 
 jobs:
   build-and-push-image:
@@ -59,6 +60,11 @@ jobs:
       - name: Pull the docker image
         run: docker pull ${{ steps.meta.outputs.tags }}
 
+      - name: Set the version from iknite build
+        if: ${{ github.even_type == 'iknite-release'}}
+        run: |
+          echo IKNITE_VERSION=$(echo ${{ github.event.client_payload.version }} | cut -c 2-) >> $GITHUB_ENV
+
       - name: Run Docker Image
         run: |
           /usr/bin/docker run \
@@ -74,6 +80,7 @@ jobs:
             -e RUNNER_TOOL_CACHE -e RUNNER_TEMP -e RUNNER_WORKSPACE \
             -e ACTIONS_RUNTIME_URL -e ACTIONS_RUNTIME_TOKEN -e ACTIONS_CACHE_URL \
             -e GITHUB_ACTIONS=true -e CI=true \
+            -e IKNITE_VERSION \
             -v "/var/run/docker.sock":"/var/run/docker.sock" \
             -v "/home/runner/work/_temp/_github_home":"/github/home" \
             -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
