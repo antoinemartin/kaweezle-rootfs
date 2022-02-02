@@ -60,10 +60,18 @@ jobs:
       - name: Pull the docker image
         run: docker pull ${{ steps.meta.outputs.tags }}
 
+    - name: git-get-release-action
+      id: iknite_release
+      uses: cardinalby/git-get-release-action@1.2.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        latest: true
+        repo: kaweelze/iknite
+
       - name: Set the version from iknite build
-        if: ${{ github.even_type == 'iknite-release'}}
         run: |
-          echo IKNITE_VERSION=$(echo ${{ github.event.client_payload.version }} | cut -c 2-) >> $GITHUB_ENV
+          echo IKNITE_VERSION=$(echo ${{ steps.iknite_release.outputs.tag_name }} | cut -c 2-) >> $GITHUB_ENV
 
       - name: Run Docker Image
         run: |
