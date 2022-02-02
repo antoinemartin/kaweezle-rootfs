@@ -69,7 +69,7 @@ $(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz $(BUILDDIR)/iknite.apk wslimage/rc.c
 	cp -f wslimage/kaweezle-devel@kaweezle.com-c9d89864.rsa.pub $@/etc/apk/keys
 	grep -q edge/testing $@/etc/apk/repositories || echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> $@/etc/apk/repositories
 	cp $(BUILDDIR)/iknite.apk $@
-	chroot $@ /sbin/apk --update-cache add zsh oh-my-zsh /iknite.apk
+	chroot $@ /sbin/apk --update-cache add openrc zsh oh-my-zsh /iknite.apk
 	rm -f $@/iknite.apk
 	mv $@/etc/cni/net.d/10-crio-bridge.conf $@/etc/cni/net.d/12-crio-bridge.conf || /bin/true
 	cp -f $@/usr/share/oh-my-zsh/templates/zshrc.zsh-template $@/root/.zshrc
