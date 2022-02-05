@@ -5,9 +5,8 @@ RUN set -euxo pipefail ;\
     apk --no-cache --update add \
         curl \
         git \
-        go \
         make \
-        skopeo \
+        podman \
         libarchive-tools \
         fuse-overlayfs
 
