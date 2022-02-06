@@ -38,7 +38,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libarchive-tools
-          sudo make
+          sudo make BUILDDIR="${{ github.workspace }}/build"
 
       - name: Upload root fs artifact
         uses: actions/upload-artifact@v2
