@@ -31,7 +31,7 @@ BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:v0.0.21 \
 	quay.io/coreos/flannel:v0.15.1 \
 	quay.io/metallb/controller:v0.11.0 \
 	quay.io/metallb/speaker:v0.11.0 \
-	k8s.gcr.io/metrics-server/metrics-server:v0.6.0
+	k8s.gcr.io/metrics-server/metrics-server:v0.6.1
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
 
