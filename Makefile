@@ -13,8 +13,8 @@ LNCR_ZIP_EXE=Alpine.exe
 KUBERNETES_VERSION?=1.23.1
 IKNITE_VERSION?=0.1.8
 IKNITE_KEY_NAME=kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
+IKNITE_REPO_URL:=https://kaweezle.com/repo/
 IKNITE_BASE_URL:=https://github.com/kaweezle/iknite/releases/download
-IKNITE_URL:=$(IKNITE_BASE_URL)/v$(IKNITE_VERSION)/iknite_$(IKNITE_VERSION)_linux_amd64.apk
 IKNITE_PUB_KEY_URL:=$(IKNITE_BASE_URL)/v$(IKNITE_VERSION)/$(IKNITE_KEY_NAME)
 
 KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.6 \
@@ -63,16 +63,15 @@ $(BUILDDIR)/rootfs.tar.gz: $(BUILDDIR)/rootfs
 	bsdtar -zcpf $@ -C $< `ls $<`
 	chown `id -un` $@
 
-$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz $(BUILDDIR)/iknite.apk wslimage/rc.conf $(BUILDDIR)/$(IKNITE_KEY_NAME)
+$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNITE_KEY_NAME)
 	@echo -e '\e[1;31mBuilding rootfs...\e[m'
 	mkdir -p $@
 	bsdtar -zxpkf $(BUILDDIR)/base.tar.gz -C $@
 	cp -f /etc/resolv.conf $@/etc/resolv.conf
 	cp -f $(BUILDDIR)/$(IKNITE_KEY_NAME) $@/etc/apk/keys/$(IKNITE_KEY_NAME)
 	grep -q edge/testing $@/etc/apk/repositories || echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> $@/etc/apk/repositories
-	cp $(BUILDDIR)/iknite.apk $@
-	chroot $@ /sbin/apk --update-cache add openrc zsh oh-my-zsh /iknite.apk
-	rm -f $@/iknite.apk
+	grep -q kaweezle $@/etc/apk/repositories || echo "$(IKNITE_REPO_URL)" >> $@/etc/apk/repositories
+	chroot $@ /sbin/apk --update-cache add openrc zsh oh-my-zsh iknite
 	mv $@/etc/cni/net.d/10-crio-bridge.conf $@/etc/cni/net.d/12-crio-bridge.conf || /bin/true
 	cp -f $@/usr/share/oh-my-zsh/templates/zshrc.zsh-template $@/root/.zshrc
 	sed -ie '/^root:/ s#:/bin/.*$$#:/bin/zsh#' $@/etc/passwd
@@ -109,11 +108,6 @@ $(BUILDDIR)/base.tar.gz: | $(BUILDDIR)
 $(BUILDDIR)/icons.zip: | $(BUILDDIR)
 	@echo -e '\e[1;31mDownloading icons.zip...\e[m'
 	$(DLR) $(DLR_FLAGS) $(LNCR_ZIP_URL) -o $@
-
-$(BUILDDIR)/iknite.apk: | $(BUILDDIR)
-	@echo -e '\e[1;31mDownloading iknite APK...\e[m'
-	$(DLR) $(DLR_FLAGS) $(IKNITE_URL) -o $@
-
 
 $(BUILDDIR)/$(IKNITE_KEY_NAME): | $(BUILDDIR)
 	@echo -e '\e[1;31mDownloading iknite APK public key...\e[m'
