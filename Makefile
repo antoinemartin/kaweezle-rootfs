@@ -10,7 +10,7 @@ DLR_FLAGS=-L
 BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-minirootfs-3.15.0-x86_64.tar.gz
 LNCR_ZIP_URL=https://github.com/yuk7/wsldl/releases/download/21082800/icons.zip
 LNCR_ZIP_EXE=Alpine.exe
-KUBERNETES_VERSION?=1.23.5
+KUBERNETES_VERSION?=1.23.6
 IKNITE_VERSION?=0.1.8
 IKNITE_KEY_NAME=kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
 IKNITE_REPO_URL:=https://kaweezle.com/repo/
@@ -26,16 +26,16 @@ KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.6 \
 	k8s.gcr.io/kube-apiserver:v$(KUBERNETES_VERSION)
 
 
-BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:v0.0.21 \
-	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.0 \
-	quay.io/coreos/flannel:v0.15.1 \
-	quay.io/metallb/controller:v0.11.0 \
-	quay.io/metallb/speaker:v0.11.0 \
+BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:master-head \
+	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.1 \
+	rancher/mirrored-flannelcni-flannel:v0.16.3 \
+	quay.io/metallb/controller:v0.12.1 \
+	quay.io/metallb/speaker:v0.12.1 \
 	k8s.gcr.io/metrics-server/metrics-server:v0.6.1
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
 
-.PHONY: make_images default clean kwsl
+.PHONY: default clean kwsl
 
 default: $(OUT_ZIP).sha256 $(BUILDDIR)/rootfs.tar.gz.sha256
 
@@ -63,7 +63,7 @@ $(BUILDDIR)/rootfs.tar.gz: $(BUILDDIR)/rootfs
 	bsdtar -zcpf $@ -C $< `ls $<`
 	chown `id -un` $@
 
-$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNITE_KEY_NAME)
+$(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNITE_KEY_NAME) $(BUILDDIR)/container_images.tar
 	@echo -e '\e[1;31mBuilding rootfs...\e[m'
 	mkdir -p $@
 	bsdtar -zxpkf $(BUILDDIR)/base.tar.gz -C $@
@@ -79,9 +79,9 @@ $(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNIT
 	rm -rf `find $@/var/cache/apk/ -type f`
 	mkdir -p $@/var/lib/containers/storage
 	sed -ie '/^graphroot = / s#.*$$#graphroot = "$@/var/lib/containers/storage"#' /etc/containers/storage.conf
-	sed -ie 's/^#mount_program/mount_program/' /etc/containers/storage.conf
-	$(foreach I, $(CONTAINER_IMAGES), podman image pull $I;)
-	-umount $@/var/lib/containers/storage/overlay
+	podman load -i $(BUILDDIR)/container_images.tar
+	rm $@/var/lib/containers/storage/libpod/bolt_state.db
+	sed -ie '/^graphroot = / s#.*$$#graphroot = "/var/lib/containers/storage"#' /etc/containers/storage.conf
 	chmod +x $@
 	mkdir -p $@/lib/rc/init.d
 	chroot $@ ln -s /lib/rc/init.d /run/openrc || /bin/true
@@ -89,13 +89,9 @@ $(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNIT
 	[ -f $@/etc/rc.conf.orig ] || mv $@/etc/rc.conf $@/etc/rc.conf.orig
 	cp -f wslimage/rc.conf $@/etc/rc.conf
 
-# For this to work, you need to have skopeo installed locally
-make_images: $(BUILDDIR)/rootfs
-	mkdir -p $@/var/lib/containers/storage
-	sed -ie '/^graphroot = / s#.*$$#graphroot = "$</var/lib/containers/storage"#' /etc/containers/storage.conf
-	sed -ie 's/^#mount_program/mount_program/' /etc/containers/storage.conf
-	$(foreach I, $(CONTAINER_IMAGES), podman image pull $I;)
-	-umount $</var/lib/containers/storage/overlay
+$(BUILDDIR)/container_images.tar:
+	podman image pull $(CONTAINER_IMAGES)
+	podman image save -m -o $@ $(CONTAINER_IMAGES)
 
 $(BUILDDIR)/images: $(BUILDDIR)/images.tar.gz
 	@echo -e '\e[1;31mUncompressing images...\e[m'
