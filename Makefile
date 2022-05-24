@@ -7,7 +7,7 @@ LNCR_EXE=kaweezle.exe
 
 DLR=curl
 DLR_FLAGS=-L
-BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-minirootfs-3.15.0-x86_64.tar.gz
+BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.0-x86_64.tar.gz
 LNCR_ZIP_URL=https://github.com/yuk7/wsldl/releases/download/21082800/icons.zip
 LNCR_ZIP_EXE=Alpine.exe
 KUBERNETES_VERSION?=1.24.0
