@@ -10,7 +10,7 @@ DLR_FLAGS=-L
 BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.0-x86_64.tar.gz
 LNCR_ZIP_URL=https://github.com/yuk7/wsldl/releases/download/21082800/icons.zip
 LNCR_ZIP_EXE=Alpine.exe
-KUBERNETES_VERSION?=1.24.0
+KUBERNETES_VERSION?=1.24.3
 IKNITE_VERSION?=0.1.8
 IKNITE_KEY_NAME=kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
 IKNITE_REPO_URL:=https://kaweezle.com/repo/
@@ -27,10 +27,10 @@ KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.7 \
 
 
 BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:master-head \
-	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.0.1 \
-	rancher/mirrored-flannelcni-flannel:v0.16.3 \
-	quay.io/metallb/controller:v0.12.1 \
-	quay.io/metallb/speaker:v0.12.1 \
+	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.1.0 \
+	rancher/mirrored-flannelcni-flannel:v0.18.1 \
+	quay.io/metallb/controller:v0.13.4 \
+	quay.io/metallb/speaker:v0.13.4 \
 	k8s.gcr.io/metrics-server/metrics-server:v0.6.1
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
