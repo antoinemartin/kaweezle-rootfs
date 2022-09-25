@@ -10,27 +10,27 @@ DLR_FLAGS=-L
 BASE_URL=https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.0-x86_64.tar.gz
 LNCR_ZIP_URL=https://github.com/yuk7/wsldl/releases/download/21082800/icons.zip
 LNCR_ZIP_EXE=Alpine.exe
-KUBERNETES_VERSION?=1.24.3
+KUBERNETES_VERSION?=1.25.0
 IKNITE_VERSION?=0.1.8
 IKNITE_KEY_NAME=kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
 IKNITE_REPO_URL:=https://kaweezle.com/repo/
 IKNITE_BASE_URL:=https://github.com/kaweezle/iknite/releases/download
 IKNITE_PUB_KEY_URL:=$(IKNITE_BASE_URL)/v$(IKNITE_VERSION)/$(IKNITE_KEY_NAME)
 
-KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.7 \
+KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.8 \
 	k8s.gcr.io/kube-controller-manager:v$(KUBERNETES_VERSION) \
-	k8s.gcr.io/etcd:3.5.3-0 \
+	k8s.gcr.io/etcd:3.5.4-0 \
 	k8s.gcr.io/kube-proxy:v$(KUBERNETES_VERSION) \
 	k8s.gcr.io/kube-scheduler:v$(KUBERNETES_VERSION) \
-	k8s.gcr.io/coredns/coredns:v1.8.6 \
+	k8s.gcr.io/coredns/coredns:v1.9.3 \
 	k8s.gcr.io/kube-apiserver:v$(KUBERNETES_VERSION)
 
 
 BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:master-head \
 	docker.io/rancher/mirrored-flannelcni-flannel-cni-plugin:v1.1.0 \
-	rancher/mirrored-flannelcni-flannel:v0.18.1 \
-	quay.io/metallb/controller:v0.13.4 \
-	quay.io/metallb/speaker:v0.13.4 \
+	rancher/mirrored-flannelcni-flannel:v0.19.2 \
+	quay.io/metallb/controller:v0.13.5 \
+	quay.io/metallb/speaker:v0.13.5 \
 	k8s.gcr.io/metrics-server/metrics-server:v0.6.1
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
