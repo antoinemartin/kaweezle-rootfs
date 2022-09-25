@@ -32,7 +32,8 @@ BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:master-head \
 	rancher/mirrored-flannelcni-flannel:v0.19.2 \
 	quay.io/metallb/controller:v0.13.5 \
 	quay.io/metallb/speaker:v0.13.5 \
-	k8s.gcr.io/metrics-server/metrics-server:v0.6.1
+	k8s.gcr.io/metrics-server/metrics-server:v0.6.1 \
+	docker.io/boxboat/kubectl:$(KUBERNETES_VERSION)
 
 CONTAINER_IMAGES=$(KUBERNETES_CONTAINER_IMAGES) $(BASE_CONTAINER_IMAGES)
 
