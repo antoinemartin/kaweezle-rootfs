@@ -17,13 +17,14 @@ IKNITE_REPO_URL:=https://kaweezle.com/repo/
 IKNITE_BASE_URL:=https://github.com/kaweezle/iknite/releases/download
 IKNITE_PUB_KEY_URL:=$(IKNITE_BASE_URL)/v$(IKNITE_VERSION)/$(IKNITE_KEY_NAME)
 
-KUBERNETES_CONTAINER_IMAGES=k8s.gcr.io/pause:3.8 \
-	k8s.gcr.io/kube-controller-manager:v$(KUBERNETES_VERSION) \
-	k8s.gcr.io/etcd:3.5.4-0 \
-	k8s.gcr.io/kube-proxy:v$(KUBERNETES_VERSION) \
-	k8s.gcr.io/kube-scheduler:v$(KUBERNETES_VERSION) \
-	k8s.gcr.io/coredns/coredns:v1.9.3 \
-	k8s.gcr.io/kube-apiserver:v$(KUBERNETES_VERSION)
+KUBERNETES_CONTAINER_IMAGES=registry.k8s.io/pause:3.8 \
+	registry.k8s.io/pause:3.6 \
+	registry.k8s.io/kube-controller-manager:v$(KUBERNETES_VERSION) \
+	registry.k8s.io/etcd:3.5.4-0 \
+	registry.k8s.io/kube-proxy:v$(KUBERNETES_VERSION) \
+	registry.k8s.io/kube-scheduler:v$(KUBERNETES_VERSION) \
+	registry.k8s.io/coredns/coredns:v1.9.3 \
+	registry.k8s.io/kube-apiserver:v$(KUBERNETES_VERSION)
 
 
 BASE_CONTAINER_IMAGES=docker.io/rancher/local-path-provisioner:master-head \
