@@ -16,7 +16,7 @@ IKNITE_KEY_NAME=kaweezle-devel@kaweezle.com-c9d89864.rsa.pub
 IKNITE_REPO_URL:=https://kaweezle.com/repo/
 IKNITE_BASE_URL:=https://github.com/kaweezle/iknite/releases/download
 IKNITE_PUB_KEY_URL:=$(IKNITE_BASE_URL)/v$(IKNITE_VERSION)/$(IKNITE_KEY_NAME)
-CONTAINER_STORAGE_CONF=/usr/share/containers/storage.conf
+CONTAINER_STORAGE_CONF=/etc/containers/storage.conf
 
 KUBERNETES_CONTAINER_IMAGES=registry.k8s.io/pause:3.8 \
 	registry.k8s.io/pause:3.6 \
