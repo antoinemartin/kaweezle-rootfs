@@ -93,6 +93,7 @@ $(BUILDDIR)/rootfs: $(BUILDDIR)/base.tar.gz wslimage/rc.conf $(BUILDDIR)/$(IKNIT
 	cp -f wslimage/rc.conf $@/etc/rc.conf
 
 $(BUILDDIR)/container_images.tar:
+	podman info
 	podman image pull $(CONTAINER_IMAGES)
 	podman image save -m -o $@ $(CONTAINER_IMAGES)
 
