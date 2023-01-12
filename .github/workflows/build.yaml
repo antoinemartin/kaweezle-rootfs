@@ -22,7 +22,7 @@ jobs:
 
       - name: git-get-release-action
         id: iknite_release
-        uses: cardinalby/git-get-release-action@1.2.1
+        uses: cardinalby/git-get-release-action@1.2.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
