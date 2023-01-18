@@ -1,8 +1,10 @@
+<!-- markdownlint-disable MD033 MD041 -->
 <div id="top"></div>
+<!-- markdownlint-enable MD033 MD041-->
 
 <!-- PROJECT SHIELDS -->
 
-[![Go Version][go-version]][go-version]
+[![Deprecated][deprecated-url]][iknite] [![Go Version][go-version]][go-version]
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -12,6 +14,8 @@
 [![Workflow][workflow-shield]][workflow-url]
 
 <!-- PROJECT LOGO -->
+<!-- markdownlint-disable MD033 -->
+
 <br />
 <div align="center">
 
@@ -36,6 +40,7 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#deprecation-notice">Deprecation notice</a></li>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
@@ -57,6 +62,15 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
+<!-- markdownlint-enable MD033 -->
+
+<!-- DEPRECATION NOTICE -->
+
+## Deprecation notice
+
+This project is being **DEPRECATED** starting from **January 2023**. Its main
+feature, which is building the root filesystem supporting [Kaweezle], is being
+transferred to [Iknite]. This project is kept for reference.
 
 <!-- ABOUT THE PROJECT -->
 
@@ -65,8 +79,7 @@
 Kaweezle allows running a Kubernetes cluster on Windows using Windows Subsystem
 for Linux 2 (WSL 2).
 
-This project is the sister project of
-[Kaweezle](https://github.com/kaweezle/kaweezle). It contains the root
+This project is the sister project of [Kaweezle]. It contains the root
 filesystem of the WSL distribution used for running Kubernetes.
 
 The distribution is created from the Alpine
@@ -75,22 +88,22 @@ adding the appropriate packages from the Edge repository. The container images
 of the base pods (coredns, api-server, ...) are also downloaded for faster setup
 times.
 
-The distribution contains a small go based executable, `kwsl` that is run by its
+The distribution contains a go based executable, `iknite` that is run by its
 Windows counterpart (`kaweezle`) to start or restart the appropriate
 dependencies and the Kubernetes cluster.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
 
 This project uses the following components:
 
--   [go](https://go.dev/)
--   [cobra](https://github.com/spf13/cobra)
--   [logrus](github.com/sirupsen/logrus)
--   [client-go](https://github.com/kubernetes/client-go)
+- [go](https://go.dev/)
+- [cobra](https://github.com/spf13/cobra)
+- [logrus](github.com/sirupsen/logrus)
+- [client-go](https://github.com/kubernetes/client-go)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 
@@ -100,8 +113,8 @@ Please refer to the
 [kaweezle readme](https://github.com/kaweezle/kaweezle/README.md) for
 installation instructions.
 
-The follwing sections give instuctions on how to use the root filesystem without
-the `kaweezle` command.
+The following sections give instructions on how to use the root filesystem
+without the `kaweezle` command.
 
 ### Prerequisites
 
@@ -130,7 +143,7 @@ To use the kubernetes cluster, you will need to have kubectl installed:
 > scoop install kubectl
 ```
 
-Other tools might be of insterest, like `k9s`, `kubectx`, `kubens` or `stern`.
+Other tools might be of interest, like `k9s`, `kubectx`, `kubens` or `stern`.
 All are available through scoop. You can install all of them at once with the
 following command:
 
@@ -150,7 +163,7 @@ You can create a WSL distribution with the following set of commands:
 > mkdir kwsl
 > cd kwsl
 > (New-Object Net.WebClient).DownloadFile("https://github.com/kaweezle/kaweezle-rootfs/releases/download/latest/rootfs.tar.gz", "$PWD\rootfs.tar.gz")
-> wsl --import kwsl .
+> wsl --import kwsl . rootfs.tar.gz
 ```
 
 You will have a WSL distribution called `kwsl` which file system will be located
@@ -163,7 +176,7 @@ in the current director:
   kwsl                    Stopped         2
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 
@@ -172,7 +185,7 @@ in the current director:
 To start the kubernetes cluster, issue the following command:
 
 ```powershell
-❯ wsl -d kwsl /kwsl start
+❯ wsl -d kwsl iknite -v info start -w 120
 ```
 
 The distribution is now running:
@@ -185,6 +198,8 @@ The distribution is now running:
 ```
 
 Now the kubernetes cluster can be accessed:
+
+<!-- cSpell: disable -->
 
 ```powershell
 ❯ $env:KUBECONFIG="\\wsl$\kwsl\root\.kube\config"
@@ -207,19 +222,18 @@ metallb-system       controller-7cf77c64fb-h72jx               1/1     Running  
 metallb-system       speaker-2h66l                             1/1     Running   0          68s
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- cSpell: enable -->
+
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
--   [ ] Automate the releases through Github actions.
--   [ ] ...
-
 See the [open issues](https://github.com/kaweezle/kaweezle-rootfs/issues) for a
 full list of proposed features (and known issues).
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 
@@ -237,7 +251,7 @@ create a pull request. You can also simply open an issue with the tag
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- LICENSE -->
 
@@ -245,7 +259,7 @@ create a pull request. You can also simply open an issue with the tag
 
 Distributed under the Apache License. See `LICENSE` for more information.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
 
@@ -256,7 +270,7 @@ Kaweezle - [@kaweezle](https://twitter.com/kaweezle)
 Project Link:
 [https://github.com/kaweezle/kaweezle-rootfs](https://github.com/kaweezle/kaweezle-rootfs)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -272,9 +286,9 @@ repository.
 You may be interested by existing alternatives from which we have taken some
 ideas:
 
--   [Rancher Desktop](https://rancherdesktop.io/)
--   [Minikube](https://github.com/kubernetes/minikube)
--   [Kind](https://kind.sigs.k8s.io/)
+- [Rancher Desktop](https://rancherdesktop.io/)
+- [Minikube](https://github.com/kubernetes/minikube)
+- [Kind](https://kind.sigs.k8s.io/)
 
 By using
 [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)
@@ -284,35 +298,31 @@ This readme has has been created from the
 [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 project.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<!-- markdownlint-disable-line --><p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]:
-    https://img.shields.io/github/contributors/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
-[contributors-url]:
-    https://github.com/kaweezle/kaweezle-rootfs/graphs/contributors
-[forks-shield]:
-    https://img.shields.io/github/forks/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
+<!-- prettier-ignore-start -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
+[contributors-url]: https://github.com/kaweezle/kaweezle-rootfs/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
 [forks-url]: https://github.com/kaweezle/kaweezle-rootfs/network/members
-[stars-shield]:
-    https://img.shields.io/github/stars/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
 [stars-url]: https://github.com/kaweezle/kaweezle-rootfs/stargazers
-[issues-shield]:
-    https://img.shields.io/github/issues/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/kaweezle/kaweezle-rootfs.svg?style=for-the-badge
 [issues-url]: https://github.com/kaweezle/kaweezle-rootfs/issues
-[license-shield]:
-    https://img.shields.io/badge/license-apache_2.0-green?style=for-the-badge&logo=none
+[license-shield]: https://img.shields.io/badge/license-apache_2.0-green?style=for-the-badge&logo=none
 [license-url]: https://github.com/kaweezle/kaweezle-rootfs/blob/master/LICENSE
-[linkedin-shield]:
-    https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/kaweezle
-[go-version]:
-    https://img.shields.io/badge/Go-1.17+-00ADD8?style=for-the-badge&logo=go
-[stability]:
-    https://img.shields.io/badge/stability-experimental-orange?style=for-the-badge
-[workflow-shield]:
-    https://github.com/kaweezle/kaweezle-rootfs/actions/workflows/build.yaml/badge.svg
-[workflow-url]:
-    https://github.com/kaweezle/kaweezle-rootfs/actions/workflows/build.yaml
+[go-version]: https://img.shields.io/badge/Go-1.17+-00ADD8?style=for-the-badge&logo=go
+[stability]: https://img.shields.io/badge/stability-experimental-orange?style=for-the-badge
+[workflow-shield]: https://github.com/kaweezle/kaweezle-rootfs/actions/workflows/build.yaml/badge.svg
+[workflow-url]: https://github.com/kaweezle/kaweezle-rootfs/actions/workflows/build.yaml
+[deprecated-url]: https://img.shields.io/badge/DEPRECATED-kaweezle%2Fikinte-inactive?style=for-the-badge&logo=github
+[Kaweezle]: https://github.com/kaweezle/kaweezle
+[Iknite]: https://github.com/kaweezle/iknite
+
+<!-- prettier-ignore-end -->
